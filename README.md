@@ -181,6 +181,8 @@ MobSF analyse automatiquement :
 
 ---
 
+
+
 ## 6. Étape 4 — Démarrer l'analyse dynamique
 
 ### Lancer le Dynamic Analyzer
@@ -281,12 +283,45 @@ SELECT * FROM myuser;
 | Correction | SQLCipher ou Room avec chiffrement |
 
 ---
+## 8. Étape 6 — Instrumentation Frida dans MobSF
 
+### Scripts Frida disponibles par défaut
 
+MobSF intègre des scripts Frida prêts à l'emploi dans l'interface Dynamic Analyzer :
 
-## 8. Concepts clés
+**Default (activés automatiquement) :**
 
-### 8.1 Analyse statique vs dynamique
+| Script | Rôle |
+|---|---|
+| API Monitoring | Capture tous les appels API sensibles en temps réel |
+| SSL Pinning Bypass | Neutralise le certificate pinning (TrustManager, OkHttp) |
+| Root Detection Bypass | Bypass `Build.TAGS`, `File.exists()` pour `/su` |
+| Debugger Check Bypass | Neutralise `Debug.isDebuggerConnected()` |
+
+**Auxiliary (activables à la demande) :**
+
+| Script | Rôle |
+|---|---|
+| Enumerate Loaded Classes | Liste toutes les classes Java chargées |
+| Capture Strings | Capture les chaînes de caractères manipulées |
+| Capture String Comparisons | Capture les comparaisons de chaînes (utile pour les secrets) |
+| Enumerate Class Methods | Liste les méthodes d'une classe spécifiée |
+| Search Class Pattern | Cherche des classes par pattern (ex: `ssl\.Trust*`) |
+| Trace Class Methods | Trace les appels de méthodes spécifiées |
+
+### Lancer l'instrumentation
+
+```
+1. Cocher les scripts souhaités dans le panneau Frida Scripts
+2. Cliquer "Start Instrumentation"
+3. Interagir avec l'app sur l'émulateur
+4. Cliquer "Frida Live Logs" pour voir les captures en temps réel
+```
+---
+
+## 9. Concepts clés
+
+### 9.1 Analyse statique vs dynamique
 
 | Approche | Ce qu'elle voit | Ce qu'elle manque |
 |---|---|---|
@@ -294,7 +329,7 @@ SELECT * FROM myuser;
 | Dynamique (MobSF, Frida) | Fichiers créés, trafic réel, valeurs en mémoire | Code mort non exécuté |
 | **Combinée** | **Vue complète** | — |
 
-### 8.2 SharedPreferences — Vulnérabilité classique
+### 9.2 SharedPreferences — Vulnérabilité classique
 
 ```java
 // Code vulnérable
@@ -314,13 +349,13 @@ EncryptedSharedPreferences.create(
 );
 ```
 
-###  8.4 Proxy HTTPS MobSF
+###  9.3 Proxy HTTPS MobSF
 
 MobSF installe son certificat CA directement dans le store système de l'émulateur (pas utilisateur) — ce qui lui permet d'intercepter le trafic HTTPS même des apps avec Network Security Config restrictive.
 
 ---
 
-## 9. Récapitulatif des commandes
+## 10. Récapitulatif des commandes
 
 ### Setup émulateur
 
